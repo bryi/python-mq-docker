@@ -1,0 +1,49 @@
+version: "3.2"
+services:
+
+    rabbitmq:
+        container_name: rabbitmq
+        image: 'rabbitmq:3'
+        restart: always
+        expose:
+            - "5672"
+        healthcheck:
+            test: rabbitmq-diagnostics -q ping
+            interval: 30s
+            timeout: 30s
+            retries: 3
+
+    receiver:
+        container_name: receiver
+        image: bryi/helloworldmq
+        restart: on-failure
+        build:
+            context: .
+        depends_on:
+            - rabbitmq
+        environment:
+            - PATH=/bin:/usr/bin:/usr/local/bin:$PATH
+        command: python3 -u worker.py
+
+    receiver2:
+        container_name: receiver2
+        image: bryi/helloworldmq
+        restart: on-failure
+        build:
+            context: .
+        depends_on:
+            - rabbitmq
+        environment:
+            - PATH=/bin:/usr/bin:/usr/local/bin:$PATH
+        command: python3 -u worker.py
+
+    publisher:
+        container_name: publisher
+        image: bryi/helloworldmq
+        restart: on-failure
+        depends_on:
+            - rabbitmq
+            - receiver
+        environment:
+            - PATH=/bin:/usr/bin:/usr/local/bin:$PATH
+        command: python3 -u sender.py
