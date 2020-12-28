@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 import pika
 from time import sleep
+from worker import get_env_variable
 
 message = "Hello World!"
-connection = pika.BlockingConnection(pika.ConnectionParameters('rabbitmq'))
+RABBIT_MQ = get_env_variable("RABBIT_MQ")
+connection = pika.BlockingConnection(pika.ConnectionParameters(RABBIT_MQ))
 channel = connection.channel()
 channel.queue_declare(queue='hello', durable=True)
 

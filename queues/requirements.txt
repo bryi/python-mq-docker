@@ -1,1 +1,5 @@
-pika==1.1.0
+python-dotenv
+psycopg2
+sqlalchemy
+pika
+sqlalchemy_utils
