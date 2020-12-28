@@ -47,14 +47,25 @@ def main(POSTGRES_URL, POSTGRES_USER, POSTGRES_PW, POSTGRES_DB, RABBIT_MQ):
 
     base.metadata.create_all(db)
 
-    global count_msg
-    count_msg = 0
+    global count
+    count_msgs = session.query(Result)
+    counts = []
+    for count in count_msgs:
+        counts.append(count.id)
+    try:
+        count_msg = max(counts)
+    except:
+        count_msg = 0
+    count = count_msg
+    #print(f'START COUNT {count}')
     global result
-    result = Result(id=int(count_msg), result='Success!')
-    def add_to_db(count_msg, session):
+    
+    def add_to_db(count, session):
+        #print(count)
+        result = Result(id=int(count), result='Success!')
         session.add(result)  
         session.commit()
-        print(f'RESULT {count_msg} SUCCESSFULLY WRITED TO DB!')
+        print(f'RESULT {count} SUCCESSFULLY WRITED TO DB!')
 
     #RABBITMQ
 
@@ -67,9 +78,9 @@ def main(POSTGRES_URL, POSTGRES_USER, POSTGRES_PW, POSTGRES_DB, RABBIT_MQ):
         print(" [x] Received %r" % body.decode())
         sleep(body.count(b'.'))
         ch.basic_ack(delivery_tag = method.delivery_tag)
-        global count_msg
-        count_msg += 1
-        add_to_db(count_msg, session)
+        global count
+        count += 1
+        add_to_db(count, session)
         
     channel.basic_qos(prefetch_count=1)
     channel.basic_consume(queue='hello', on_message_callback=callback)
