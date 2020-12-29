@@ -1,0 +1,5 @@
+python-dotenv
+psycopg2
+sqlalchemy
+boto3
+sqlalchemy_utils
