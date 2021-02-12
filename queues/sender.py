@@ -19,6 +19,6 @@ while True:
     
     print(f"[x] Sent {message}")
 
-    sleep(3)
+    sleep(1)
 
 connection.close()

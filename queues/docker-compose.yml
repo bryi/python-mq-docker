@@ -36,6 +36,26 @@ services:
             - PATH=/home/worker/.local/bin:$PATH
         command: python3 -u sender.py
 
+    publisher2:
+        container_name: publisher2
+        image: bryi/helloworldmq
+        restart: on-failure
+        depends_on:
+            - receiver
+        environment:
+            - PATH=/home/worker/.local/bin:$PATH
+        command: python3 -u sender.py
+
+    publisher3:
+        container_name: publisher3
+        image: bryi/helloworldmq
+        restart: on-failure
+        depends_on:
+            - receiver
+        environment:
+            - PATH=/home/worker/.local/bin:$PATH
+        command: python3 -u sender.py
+
     postgres:
         container_name: postgres
         image: 'postgres:12'
